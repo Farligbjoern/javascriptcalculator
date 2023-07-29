@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head lang="TR">
+    <title>Hesap Makinesi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            width: 200px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .result {
+            font-size: 18px;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 45px;
+            height: 40px;
+            font-size: 18px;
+            margin: 2px;
+            cursor: pointer;
+        }
+
+        button.operator {
+            background-color: #f0f0f0;
+        }
+
+        button.clear {
+            background-color: #ff9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="result" id="result">0</div>
+        <button onclick="appendToResult('1')">1</button>
+        <button onclick="appendToResult('2')">2</button>
+        <button onclick="appendToResult('3')">3</button>
+        <br>
+        <button onclick="appendToResult('4')">4</button>
+        <button onclick="appendToResult('5')">5</button>
+        <button onclick="appendToResult('6')">6</button>
+        <br>
+        <button onclick="appendToResult('6')">7</button>
+        <button onclick="appendToResult('7')">8</button>
+        <button onclick="appendToResult('8')">9</button>
+        <br>
+        <button onclick="appendToResult('0')">0</button>
+        <button onclick="appendToResult('.')">.</button>
+        <button onclick="backspace()">⌫</button>
+        <br><br>
+        <button class="operator" onclick="appendToResult('*')">*</button>
+        <button class="operator" onclick="appendToResult('-')">-</button>
+        <button class="operator" onclick="appendToResult('/')">/</button>
+        <button class="operator" onclick="calculate()">=</button>
+        <button class="operator" onclick="appendToResult('+')">+</button>
+        <button class="clear" onclick="clearResult()">C</button>
+        <br>
+    </div>
+
+    <script lang="text/javascript">
+        var history = [];
+
+        function appendToResult(value) {
+            var resultElement = document.getElementById('result');
+            var currentValue = resultElement.textContent;
+
+            if (currentValue === '0' && !isNaN(value)) {
+                resultElement.textContent = value;
+            } else {
+                resultElement.textContent += value;
+            }
+        }
+
+        function clearResult() {
+            document.getElementById('result').textContent = '0';
+        }
+
+        function calculate() {
+            var resultElement = document.getElementById('result');
+            var expression = resultElement.textContent;
+
+            try {
+                var result = eval(expression);
+                resultElement.textContent = result;
+            } catch (error) {
+                resultElement.textContent = 'Hata';
+            }
+
+            addToHistory(expression + ' = ' + result);
+        }
+        
+        function addToHistory(item) {
+            history.push(item);
+        }
+        
+        function backspace() {
+            var resultElement = document.getElementById('result');
+            var currentValue = resultElement.textContent;
+
+            resultElement.textContent = currentValue.slice(0, -1);
+
+            if (resultElement.textContent === '' || resultElement.textContent === '-') {
+                resultElement.textContent = '0';
+            }
+        }
+ 
+
+        document.addEventListener('keydown', function(event) {
+            var key = event.key;
+            var validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/', '.', 'Enter', 'Backspace'];
+
+            if (validKeys.includes(key)) {
+                event.preventDefault();
+
+                if (key === 'Enter') {
+                    calculate();
+                } else if(key === 'Backspace') {
+                    backspace();
+                } else {
+                    appendToResult(key);
+                }
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                event.preventDefault(); 
+                clearResult();
+            }
+        });
+
+    </script>
+</body>
+</html>
